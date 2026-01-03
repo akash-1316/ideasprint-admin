@@ -1,0 +1,291 @@
+/* =========================
+   RAIC GLOBAL THEME
+========================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background: radial-gradient(circle at top, #0b0b0f, #000000);
+  color: #f8fafc;
+}
+
+/* =========================
+   AUTH (ADMIN LOGIN)
+========================= */
+.admin-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #0f172a, #000);
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 36px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(255, 99, 71, 0.15);
+}
+
+.admin-login-card h2 {
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #ff7a18, #ff2e63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-login-card input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.4);
+  color: #ffffff;
+}
+
+.admin-login-card input:focus {
+  outline: none;
+  border-color: #ff7a18;
+}
+
+.admin-login-card button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ff7a18, #ff2e63);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.admin-login-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 122, 24, 0.5);
+}
+
+/* =========================
+   DASHBOARD LAYOUT
+========================= */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* =========================
+   SIDEBAR (RAIC STYLE)
+========================= */
+.admin-sidebar {
+  width: 260px;
+  padding: 28px 18px;
+  background: linear-gradient(180deg, #020617, #000000);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-sidebar h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ff7a18, #ff2e63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-sidebar button {
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255,255,255,0.06);
+  color: #e5e7eb;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.admin-sidebar button:hover {
+  background: linear-gradient(90deg, #ff7a18, #ff2e63);
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.admin-sidebar .logout {
+  margin-top: auto;
+  background: rgba(239,68,68,0.15);
+}
+
+.admin-sidebar .logout:hover {
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+.admin-content {
+  flex: 1;
+  padding: 36px;
+}
+
+.admin-content h2 {
+  font-size: 28px;
+  margin-bottom: 24px;
+  background: linear-gradient(90deg, #ff7a18, #ff2e63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =========================
+   STATS CARDS
+========================= */
+.stats {
+  display: flex;
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+  box-shadow: 0 0 25px rgba(255, 122, 24, 0.12);
+}
+
+.stat-card h3 {
+  font-size: 32px;
+  margin: 0;
+}
+
+.stat-card p {
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* =========================
+   FILTER BAR
+========================= */
+.admin-filters {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.admin-filters input,
+.admin-filters select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.4);
+  color: #ffffff;
+}
+
+/* =========================
+   CARDS (PAYMENTS & TEAMS)
+========================= */
+.admin-card {
+  padding: 22px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 35px rgba(0,0,0,0.6);
+}
+
+.admin-card p {
+  font-size: 14px;
+  margin: 6px 0;
+}
+
+.admin-card img {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+.admin-card button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.admin-card button:first-of-type {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: #ffffff;
+}
+
+.admin-card button:last-of-type {
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+  color: #ffffff;
+  margin-left: 10px;
+}
+
+/* =========================
+   MODAL IMAGE PREVIEW
+========================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 18px;
+  box-shadow: 0 0 50px rgba(255, 122, 24, 0.5);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stats {
+    flex-direction: column;
+  }
+}
