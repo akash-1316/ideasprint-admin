@@ -39,7 +39,7 @@ const AdminPayments = () => {
       {payments.map((p) => (
         <div className="admin-card" key={p._id}>
           <img
-            src={`http://localhost:5000/uploads/${p.screenshot}`}
+            src={`https://ideasprint-backend-server.onrender.com/uploads/${p.screenshot}`}
             alt="payment"
           />
           <p><b>UTR:</b> {p.utr}</p>
