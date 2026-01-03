@@ -21,7 +21,7 @@ const AdminDashboard = () => {
 
         <button
           onClick={() =>
-            window.open(`http://localhost:5000/api/admin/export/payments?token=${localStorage.getItem("adminToken")}`,"_blank")
+            window.open(`https://ideasprint-backend-server.onrender.com/api/admin/export/payments?token=${localStorage.getItem("adminToken")}`,"_blank")
           }
         >
           Export Excel
