@@ -7,12 +7,14 @@ const AdminPayments = () => {
   const [payments, setPayments] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
 
+  // ================= FETCH PAYMENTS =================
   useEffect(() => {
     API.get("/admin/payments")
       .then((res) => setPayments(res.data))
       .catch(() => toast.error("Unauthorized access"));
   }, []);
 
+  // ================= VERIFY / REJECT =================
   const updateStatus = async (id, verified) => {
     try {
       setLoadingId(id);
@@ -27,38 +29,39 @@ const AdminPayments = () => {
 
       toast.success(
         verified
-          ? "Payment verified successfully"
+          ? "Payment verified & mail sent"
           : "Payment marked as pending"
       );
-    } catch {
+    } catch (err) {
       toast.error("Failed to update payment");
     } finally {
       setLoadingId(null);
     }
   };
 
-  // 🔥 RESEND MAIL
+  // ================= RESEND MAIL =================
   const resendMail = async (id) => {
     try {
       setLoadingId(id);
 
-      await API.put(`/admin/payment/${id}?resend=true`, { verified: true });
+      await API.post(`/admin/payment/${id}/resend-mail`);
 
       toast.success("Verification mail resent");
-    } catch {
+    } catch (err) {
       toast.error("Failed to resend mail");
     } finally {
       setLoadingId(null);
     }
   };
 
+  // ================= UI =================
   return (
     <div>
       <h2>Payments</h2>
 
       {payments.map((p) => (
         <div className="admin-card" key={p._id}>
-          {/* 🔥 Cloudinary Image */}
+          {/* ✅ Cloudinary Image */}
           <img
             src={p.screenshot}
             alt="Payment Proof"
@@ -76,36 +79,36 @@ const AdminPayments = () => {
             {p.verified ? "Verified" : "Pending"}
           </p>
 
-          <div style={{ display: "flex", gap: "10px" }}>
-           <button
-  type="button"
-  onClick={() => {
-    console.log("VERIFY CLICKED", p._id);
-    updateStatus(p._id, true);
-  }}
->
-  Verify
-</button>
+          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+            {/* VERIFY */}
+            <button
+              type="button"
+              disabled={loadingId === p._id || p.verified}
+              onClick={() => updateStatus(p._id, true)}
+            >
+              {loadingId === p._id && !p.verified
+                ? "Verifying..."
+                : "Verify"}
+            </button>
 
+            {/* REJECT */}
+            <button
+              type="button"
+              disabled={loadingId === p._id}
+              onClick={() => updateStatus(p._id, false)}
+            >
+              Reject
+            </button>
 
-          <button
-  type="button"
-  onClick={() => {
-    console.log("REJECT CLICKED", p._id);
-    updateStatus(p._id, false);
-  }}
->
-  Reject
-</button>
-
-
+            {/* RESEND MAIL */}
             {p.verified && (
               <button
+                type="button"
                 disabled={loadingId === p._id}
                 onClick={() => resendMail(p._id)}
-                style={{ background: "#ff9800", color: "white" }}
+                style={{ background: "#ff9800", color: "#fff" }}
               >
-                Resend Mail
+                {loadingId === p._id ? "Sending..." : "Resend Mail"}
               </button>
             )}
           </div>
