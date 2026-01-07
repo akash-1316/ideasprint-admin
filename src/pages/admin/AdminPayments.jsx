@@ -14,15 +14,32 @@ const AdminPayments = () => {
       .catch(() => toast.error("Unauthorized access"));
   }, []);
 
-  // ================= TOTAL CALCULATIONS =================
-  const totals = useMemo(() => {
-    const total = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
-    const verified = payments
-      .filter((p) => p.verified)
-      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
-    const pending = total - verified;
+  // ================= CALCULATIONS =================
+  const stats = useMemo(() => {
+    const totalCount = payments.length;
+    const verifiedPayments = payments.filter((p) => p.verified);
+    const pendingPayments = payments.filter((p) => !p.verified);
 
-    return { total, verified, pending };
+    const totalAmount = payments.reduce(
+      (sum, p) => sum + Number(p.amount || 0),
+      0
+    );
+
+    const verifiedAmount = verifiedPayments.reduce(
+      (sum, p) => sum + Number(p.amount || 0),
+      0
+    );
+
+    const pendingAmount = totalAmount - verifiedAmount;
+
+    return {
+      totalCount,
+      verifiedCount: verifiedPayments.length,
+      pendingCount: pendingPayments.length,
+      totalAmount,
+      verifiedAmount,
+      pendingAmount,
+    };
   }, [payments]);
 
   // ================= VERIFY / REJECT =================
@@ -66,21 +83,26 @@ const AdminPayments = () => {
   // ================= UI =================
   return (
     <div>
-      <h2>Payments</h2>
+      <h2>Payments Dashboard</h2>
 
-      {/* 🔥 TOTALS SUMMARY */}
+      {/* 🔥 SUMMARY DASHBOARD */}
       <div className="admin-summary">
         <div className="summary-card">
-          <p>Total Collected</p>
-          <h3>₹{totals.total}</h3>
+          <p>Total Payments</p>
+          <h3>{stats.totalCount}</h3>
+          <span>₹{stats.totalAmount}</span>
         </div>
+
         <div className="summary-card success">
-          <p>Verified Amount</p>
-          <h3>₹{totals.verified}</h3>
+          <p>Verified Payments</p>
+          <h3>{stats.verifiedCount}</h3>
+          <span>₹{stats.verifiedAmount}</span>
         </div>
+
         <div className="summary-card pending">
-          <p>Pending Amount</p>
-          <h3>₹{totals.pending}</h3>
+          <p>Pending Payments</p>
+          <h3>{stats.pendingCount}</h3>
+          <span>₹{stats.pendingAmount}</span>
         </div>
       </div>
 
@@ -90,7 +112,6 @@ const AdminPayments = () => {
           <img
             src={p.screenshot}
             alt="Payment Proof"
-            style={{ width: "100%", borderRadius: "8px" }}
             onError={(e) => {
               e.target.src =
                 "https://via.placeholder.com/400x250?text=Image+Not+Available";
@@ -99,14 +120,19 @@ const AdminPayments = () => {
 
           <p><b>UTR:</b> {p.utr}</p>
           <p><b>Amount:</b> ₹{p.amount}</p>
-          <p><b>Status:</b> {p.verified ? "Verified" : "Pending"}</p>
+          <p>
+            <b>Status:</b>{" "}
+            {p.verified ? "Verified" : "Pending"}
+          </p>
 
-          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+          <div className="admin-actions">
             <button
               disabled={loadingId === p._id || p.verified}
               onClick={() => updateStatus(p._id, true)}
             >
-              {loadingId === p._id && !p.verified ? "Verifying..." : "Verify"}
+              {loadingId === p._id && !p.verified
+                ? "Verifying..."
+                : "Verify"}
             </button>
 
             <button
@@ -118,9 +144,9 @@ const AdminPayments = () => {
 
             {p.verified && (
               <button
+                className="resend"
                 disabled={loadingId === p._id}
                 onClick={() => resendMail(p._id)}
-                style={{ background: "#ff9800", color: "#fff" }}
               >
                 {loadingId === p._id ? "Sending..." : "Resend Mail"}
               </button>
