@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import API from "../../api/axios";
 import "./admin.css";
 import { toast } from "react-toastify";
@@ -13,6 +13,17 @@ const AdminPayments = () => {
       .then((res) => setPayments(res.data))
       .catch(() => toast.error("Unauthorized access"));
   }, []);
+
+  // ================= TOTAL CALCULATIONS =================
+  const totals = useMemo(() => {
+    const total = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+    const verified = payments
+      .filter((p) => p.verified)
+      .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+    const pending = total - verified;
+
+    return { total, verified, pending };
+  }, [payments]);
 
   // ================= VERIFY / REJECT =================
   const updateStatus = async (id, verified) => {
@@ -32,7 +43,7 @@ const AdminPayments = () => {
           ? "Payment verified & mail sent"
           : "Payment marked as pending"
       );
-    } catch (err) {
+    } catch {
       toast.error("Failed to update payment");
     } finally {
       setLoadingId(null);
@@ -43,11 +54,9 @@ const AdminPayments = () => {
   const resendMail = async (id) => {
     try {
       setLoadingId(id);
-
       await API.post(`/admin/payment/${id}/resend-mail`);
-
       toast.success("Verification mail resent");
-    } catch (err) {
+    } catch {
       toast.error("Failed to resend mail");
     } finally {
       setLoadingId(null);
@@ -59,9 +68,25 @@ const AdminPayments = () => {
     <div>
       <h2>Payments</h2>
 
+      {/* 🔥 TOTALS SUMMARY */}
+      <div className="admin-summary">
+        <div className="summary-card">
+          <p>Total Collected</p>
+          <h3>₹{totals.total}</h3>
+        </div>
+        <div className="summary-card success">
+          <p>Verified Amount</p>
+          <h3>₹{totals.verified}</h3>
+        </div>
+        <div className="summary-card pending">
+          <p>Pending Amount</p>
+          <h3>₹{totals.pending}</h3>
+        </div>
+      </div>
+
+      {/* 🔽 PAYMENTS LIST */}
       {payments.map((p) => (
         <div className="admin-card" key={p._id}>
-          {/* ✅ Cloudinary Image */}
           <img
             src={p.screenshot}
             alt="Payment Proof"
@@ -74,36 +99,25 @@ const AdminPayments = () => {
 
           <p><b>UTR:</b> {p.utr}</p>
           <p><b>Amount:</b> ₹{p.amount}</p>
-          <p>
-            <b>Status:</b>{" "}
-            {p.verified ? "Verified" : "Pending"}
-          </p>
+          <p><b>Status:</b> {p.verified ? "Verified" : "Pending"}</p>
 
           <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-            {/* VERIFY */}
             <button
-              type="button"
               disabled={loadingId === p._id || p.verified}
               onClick={() => updateStatus(p._id, true)}
             >
-              {loadingId === p._id && !p.verified
-                ? "Verifying..."
-                : "Verify"}
+              {loadingId === p._id && !p.verified ? "Verifying..." : "Verify"}
             </button>
 
-            {/* REJECT */}
             <button
-              type="button"
               disabled={loadingId === p._id}
               onClick={() => updateStatus(p._id, false)}
             >
               Reject
             </button>
 
-            {/* RESEND MAIL */}
             {p.verified && (
               <button
-                type="button"
                 disabled={loadingId === p._id}
                 onClick={() => resendMail(p._id)}
                 style={{ background: "#ff9800", color: "#fff" }}
