@@ -196,6 +196,96 @@ body {
   background: rgba(0,0,0,0.4);
   color: #ffffff;
 }
+/* ================= SUMMARY DASHBOARD ================= */
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin: 20px 0 30px;
+}
+
+.summary-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+}
+
+.summary-card p {
+  color: #94a3b8;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.summary-card h3 {
+  font-size: 1.8rem;
+  color: #e5e7eb;
+  margin-bottom: 4px;
+}
+
+.summary-card span {
+  font-size: 0.95rem;
+  color: #cbd5f5;
+}
+
+.summary-card.success h3 {
+  color: #22c55e;
+}
+
+.summary-card.pending h3 {
+  color: #f59e0b;
+}
+
+/* ================= PAYMENT CARDS ================= */
+
+.admin-card {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.admin-card p {
+  margin: 6px 0;
+  color: #e5e7eb;
+}
+
+/* ================= ACTION BUTTONS ================= */
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-actions button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: #2563eb;
+  color: white;
+}
+
+.admin-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-actions .resend {
+  background: #f59e0b;
+}
 
 /* =========================
    CARDS (PAYMENTS & TEAMS)
