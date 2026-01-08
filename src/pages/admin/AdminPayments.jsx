@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import API from "../../api/axios";
 import "./admin.css";
 import { toast } from "react-toastify";
@@ -7,43 +7,44 @@ const AdminPayments = () => {
   const [payments, setPayments] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
 
-  // ================= FETCH PAYMENTS =================
+  /* ================= FETCH PAYMENTS ================= */
   useEffect(() => {
     API.get("/admin/payments")
       .then((res) => setPayments(res.data))
-      .catch(() => toast.error("Unauthorized access"));
+      .catch(() => toast.error("Failed to load payments"));
   }, []);
 
-  // ================= CALCULATIONS =================
+  /* ================= DASHBOARD STATS ================= */
   const stats = useMemo(() => {
     const totalCount = payments.length;
-    const verifiedPayments = payments.filter((p) => p.verified);
-    const pendingPayments = payments.filter((p) => !p.verified);
+    const verified = payments.filter((p) => p.verified);
+    const pending = payments.filter((p) => !p.verified);
 
     const totalAmount = payments.reduce(
       (sum, p) => sum + Number(p.amount || 0),
       0
     );
 
-    const verifiedAmount = verifiedPayments.reduce(
+    const verifiedAmount = verified.reduce(
       (sum, p) => sum + Number(p.amount || 0),
       0
     );
 
     return {
       totalCount,
-      verifiedCount: verifiedPayments.length,
-      pendingCount: pendingPayments.length,
+      verifiedCount: verified.length,
+      pendingCount: pending.length,
       totalAmount,
       verifiedAmount,
       pendingAmount: totalAmount - verifiedAmount,
     };
   }, [payments]);
 
-  // ================= VERIFY / REJECT =================
+  /* ================= VERIFY / REJECT ================= */
   const updateStatus = async (id, verified) => {
     try {
       setLoadingId(id);
+
       await API.put(`/admin/payment/${id}`, { verified });
 
       setPayments((prev) =>
@@ -64,7 +65,7 @@ const AdminPayments = () => {
     }
   };
 
-  // ================= RESEND MAIL =================
+  /* ================= RESEND MAIL ================= */
   const resendMail = async (id) => {
     try {
       setLoadingId(id);
@@ -77,11 +78,12 @@ const AdminPayments = () => {
     }
   };
 
+  /* ================= UI ================= */
   return (
     <div>
       <h2>Payments Dashboard</h2>
 
-      {/* 🔥 SUMMARY */}
+      {/* ===== SUMMARY ===== */}
       <div className="admin-summary">
         <div className="summary-card">
           <p>Total Payments</p>
@@ -102,35 +104,46 @@ const AdminPayments = () => {
         </div>
       </div>
 
-      {/* 🔽 PAYMENTS */}
+      {/* ===== PAYMENTS LIST ===== */}
       {payments.map((p) => (
         <div className="admin-card" key={p._id}>
+          {/* PAYMENT IMAGE */}
           <img
             src={p.screenshot}
             alt="Payment Proof"
-            onError={(e) =>
-              (e.target.src =
-                "https://via.placeholder.com/400x250?text=No+Image")
-            }
+            onError={(e) => {
+              e.target.src =
+                "https://via.placeholder.com/400x250?text=Image+Not+Available";
+            }}
           />
 
-          {/* 🔥 NEW INFO */}
+          {/* LINKED REGISTRATION DATA */}
           <p><b>Team Name:</b> {p.teamName || "—"}</p>
           <p><b>Leader Name:</b> {p.leaderName || "—"}</p>
 
+          {/* PAYMENT INFO */}
           <p><b>UTR:</b> {p.utr}</p>
           <p><b>Amount:</b> ₹{p.amount}</p>
           <p>
             <b>Status:</b>{" "}
-            {p.verified ? "Verified" : "Pending"}
+            <span
+              className={
+                p.verified ? "status-confirmed" : "status-pending"
+              }
+            >
+              {p.verified ? "Verified" : "Pending"}
+            </span>
           </p>
 
+          {/* ACTIONS */}
           <div className="admin-actions">
             <button
               disabled={loadingId === p._id || p.verified}
               onClick={() => updateStatus(p._id, true)}
             >
-              {loadingId === p._id ? "Verifying..." : "Verify"}
+              {loadingId === p._id && !p.verified
+                ? "Verifying..."
+                : "Verify"}
             </button>
 
             <button
@@ -146,7 +159,7 @@ const AdminPayments = () => {
                 disabled={loadingId === p._id}
                 onClick={() => resendMail(p._id)}
               >
-                Resend Mail
+                {loadingId === p._id ? "Sending..." : "Resend Mail"}
               </button>
             )}
           </div>
