@@ -30,15 +30,13 @@ const AdminPayments = () => {
       0
     );
 
-    const pendingAmount = totalAmount - verifiedAmount;
-
     return {
       totalCount,
       verifiedCount: verifiedPayments.length,
       pendingCount: pendingPayments.length,
       totalAmount,
       verifiedAmount,
-      pendingAmount,
+      pendingAmount: totalAmount - verifiedAmount,
     };
   }, [payments]);
 
@@ -46,7 +44,6 @@ const AdminPayments = () => {
   const updateStatus = async (id, verified) => {
     try {
       setLoadingId(id);
-
       await API.put(`/admin/payment/${id}`, { verified });
 
       setPayments((prev) =>
@@ -80,12 +77,11 @@ const AdminPayments = () => {
     }
   };
 
-  // ================= UI =================
   return (
     <div>
       <h2>Payments Dashboard</h2>
 
-      {/* 🔥 SUMMARY DASHBOARD */}
+      {/* 🔥 SUMMARY */}
       <div className="admin-summary">
         <div className="summary-card">
           <p>Total Payments</p>
@@ -94,29 +90,33 @@ const AdminPayments = () => {
         </div>
 
         <div className="summary-card success">
-          <p>Verified Payments</p>
+          <p>Verified</p>
           <h3>{stats.verifiedCount}</h3>
           <span>₹{stats.verifiedAmount}</span>
         </div>
 
         <div className="summary-card pending">
-          <p>Pending Payments</p>
+          <p>Pending</p>
           <h3>{stats.pendingCount}</h3>
           <span>₹{stats.pendingAmount}</span>
         </div>
       </div>
 
-      {/* 🔽 PAYMENTS LIST */}
+      {/* 🔽 PAYMENTS */}
       {payments.map((p) => (
         <div className="admin-card" key={p._id}>
           <img
             src={p.screenshot}
             alt="Payment Proof"
-            onError={(e) => {
-              e.target.src =
-                "https://via.placeholder.com/400x250?text=Image+Not+Available";
-            }}
+            onError={(e) =>
+              (e.target.src =
+                "https://via.placeholder.com/400x250?text=No+Image")
+            }
           />
+
+          {/* 🔥 NEW INFO */}
+          <p><b>Team Name:</b> {p.teamName || "—"}</p>
+          <p><b>Leader Name:</b> {p.leaderName || "—"}</p>
 
           <p><b>UTR:</b> {p.utr}</p>
           <p><b>Amount:</b> ₹{p.amount}</p>
@@ -130,9 +130,7 @@ const AdminPayments = () => {
               disabled={loadingId === p._id || p.verified}
               onClick={() => updateStatus(p._id, true)}
             >
-              {loadingId === p._id && !p.verified
-                ? "Verifying..."
-                : "Verify"}
+              {loadingId === p._id ? "Verifying..." : "Verify"}
             </button>
 
             <button
@@ -148,7 +146,7 @@ const AdminPayments = () => {
                 disabled={loadingId === p._id}
                 onClick={() => resendMail(p._id)}
               >
-                {loadingId === p._id ? "Sending..." : "Resend Mail"}
+                Resend Mail
               </button>
             )}
           </div>
