@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 const AdminRegistrations = () => {
   const [teams, setTeams] = useState([]);
+  const [search, setSearch] = useState("");
 
   // ================= FETCH REGISTRATIONS =================
   useEffect(() => {
@@ -13,20 +14,43 @@ const AdminRegistrations = () => {
       .catch(() => toast.error("Failed to load registrations"));
   }, []);
 
-  // ================= STATS CALCULATION =================
+  // ================= SEARCH FILTER =================
+  const filteredTeams = useMemo(() => {
+    return teams.filter((t) =>
+      [
+        t.teamName,
+        t.leaderName,
+        t.leaderEmail,
+        t.college,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+  }, [teams, search]);
+
+  // ================= STATS CALCULATION (FILTERED) =================
   const stats = useMemo(() => {
-    const total = teams.length;
-    const confirmed = teams.filter(
+    const total = filteredTeams.length;
+    const confirmed = filteredTeams.filter(
       (t) => t.paymentStatus === "confirmed"
     ).length;
     const pending = total - confirmed;
 
     return { total, confirmed, pending };
-  }, [teams]);
+  }, [filteredTeams]);
 
   return (
     <div>
       <h2>Registrations</h2>
+
+      {/* 🔍 SEARCH BAR */}
+      <input
+        className="admin-search"
+        placeholder="Search by team, leader, email, college"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
       {/* 🔥 SUMMARY DASHBOARD */}
       <div className="admin-summary">
@@ -47,7 +71,7 @@ const AdminRegistrations = () => {
       </div>
 
       {/* 🔽 REGISTRATION LIST */}
-      {teams.map((t) => (
+      {filteredTeams.map((t) => (
         <div className="admin-card" key={t._id}>
           <p><b>Team Name:</b> {t.teamName}</p>
           <p><b>Leader:</b> {t.leaderName}</p>
@@ -57,6 +81,7 @@ const AdminRegistrations = () => {
           <p><b>Domain:</b> {t.domain}</p>
           <p><b>Team Size:</b> {t.teamSize}</p>
           <p><b>Members:</b> {t.members?.join(", ") || "—"}</p>
+
           <p>
             <b>Status:</b>{" "}
             <span
