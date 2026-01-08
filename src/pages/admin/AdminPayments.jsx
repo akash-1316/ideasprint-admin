@@ -5,28 +5,50 @@ import { toast } from "react-toastify";
 
 const AdminPayments = () => {
   const [payments, setPayments] = useState([]);
+  const [registrations, setRegistrations] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
 
-  /* ================= FETCH PAYMENTS ================= */
+  /* ================= FETCH BOTH ================= */
   useEffect(() => {
-    API.get("/admin/payments")
-      .then((res) => setPayments(res.data))
-      .catch(() => toast.error("Failed to load payments"));
+    Promise.all([
+      API.get("/admin/payments"),
+      API.get("/admin/registrations"),
+    ])
+      .then(([payRes, regRes]) => {
+        setPayments(payRes.data);
+        setRegistrations(regRes.data);
+      })
+      .catch(() => toast.error("Failed to load admin data"));
   }, []);
 
-  /* ================= DASHBOARD STATS ================= */
-  const stats = useMemo(() => {
-    const totalCount = payments.length;
-    const verified = payments.filter((p) => p.verified);
-    const pending = payments.filter((p) => !p.verified);
+  /* ================= MERGE DATA ================= */
+  const mergedPayments = useMemo(() => {
+    return payments.map((p) => {
+      const reg = registrations.find(
+        (r) => String(r.userId) === String(p.userId)
+      );
 
-    const totalAmount = payments.reduce(
-      (sum, p) => sum + Number(p.amount || 0),
+      return {
+        ...p,
+        teamName: reg?.teamName || "—",
+        leaderName: reg?.leaderName || "—",
+      };
+    });
+  }, [payments, registrations]);
+
+  /* ================= STATS ================= */
+  const stats = useMemo(() => {
+    const totalCount = mergedPayments.length;
+    const verified = mergedPayments.filter((p) => p.verified);
+    const pending = mergedPayments.filter((p) => !p.verified);
+
+    const totalAmount = mergedPayments.reduce(
+      (s, p) => s + Number(p.amount || 0),
       0
     );
 
     const verifiedAmount = verified.reduce(
-      (sum, p) => sum + Number(p.amount || 0),
+      (s, p) => s + Number(p.amount || 0),
       0
     );
 
@@ -38,7 +60,7 @@ const AdminPayments = () => {
       verifiedAmount,
       pendingAmount: totalAmount - verifiedAmount,
     };
-  }, [payments]);
+  }, [mergedPayments]);
 
   /* ================= VERIFY / REJECT ================= */
   const updateStatus = async (id, verified) => {
@@ -83,7 +105,7 @@ const AdminPayments = () => {
     <div>
       <h2>Payments Dashboard</h2>
 
-      {/* ===== SUMMARY ===== */}
+      {/* SUMMARY */}
       <div className="admin-summary">
         <div className="summary-card">
           <p>Total Payments</p>
@@ -104,46 +126,36 @@ const AdminPayments = () => {
         </div>
       </div>
 
-      {/* ===== PAYMENTS LIST ===== */}
-      {payments.map((p) => (
+      {/* PAYMENTS */}
+      {mergedPayments.map((p) => (
         <div className="admin-card" key={p._id}>
-          {/* PAYMENT IMAGE */}
           <img
             src={p.screenshot}
             alt="Payment Proof"
-            onError={(e) => {
-              e.target.src =
-                "https://via.placeholder.com/400x250?text=Image+Not+Available";
-            }}
+            onError={(e) =>
+              (e.target.src =
+                "https://via.placeholder.com/400x250?text=Image+Not+Available")
+            }
           />
 
-          {/* LINKED REGISTRATION DATA */}
-          <p><b>Team Name:</b> {p.teamName || "—"}</p>
-          <p><b>Leader Name:</b> {p.leaderName || "—"}</p>
-
-          {/* PAYMENT INFO */}
+          <p><b>Team Name:</b> {p.teamName}</p>
+          <p><b>Leader Name:</b> {p.leaderName}</p>
           <p><b>UTR:</b> {p.utr}</p>
           <p><b>Amount:</b> ₹{p.amount}</p>
+
           <p>
             <b>Status:</b>{" "}
-            <span
-              className={
-                p.verified ? "status-confirmed" : "status-pending"
-              }
-            >
+            <span className={p.verified ? "status-confirmed" : "status-pending"}>
               {p.verified ? "Verified" : "Pending"}
             </span>
           </p>
 
-          {/* ACTIONS */}
           <div className="admin-actions">
             <button
               disabled={loadingId === p._id || p.verified}
               onClick={() => updateStatus(p._id, true)}
             >
-              {loadingId === p._id && !p.verified
-                ? "Verifying..."
-                : "Verify"}
+              Verify
             </button>
 
             <button
@@ -159,7 +171,7 @@ const AdminPayments = () => {
                 disabled={loadingId === p._id}
                 onClick={() => resendMail(p._id)}
               >
-                {loadingId === p._id ? "Sending..." : "Resend Mail"}
+                Resend Mail
               </button>
             )}
           </div>
