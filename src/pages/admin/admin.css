@@ -33,16 +33,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 40px rgba(255, 99, 71, 0.15);
 }
-.admin-search {
-  width: 100%;
-  padding: 12px 14px;
-  margin: 16px 0 20px;
-  border-radius: 10px;
-  border: 1px solid #1e293b;
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 0.95rem;
-}
+
 .admin-login-card h2 {
   text-align: center;
   margin-bottom: 28px;
@@ -94,7 +85,34 @@ body {
 }
 
 /* =========================
-   SIDEBAR (RAIC STYLE)
+   TOPBAR (MOBILE)
+========================= */
+.admin-topbar {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: #020617;
+  border-bottom: 1px solid #1e293b;
+}
+
+.admin-topbar h3 {
+  font-weight: 800;
+  background: linear-gradient(90deg, #ff7a18, #ff2e63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+/* =========================
+   SIDEBAR
 ========================= */
 .admin-sidebar {
   width: 260px;
@@ -133,6 +151,11 @@ body {
   transform: translateX(4px);
 }
 
+.admin-sidebar button.active {
+  background: linear-gradient(90deg, #ff7a18, #ff2e63);
+  color: #ffffff;
+}
+
 .admin-sidebar .logout {
   margin-top: auto;
   background: rgba(239,68,68,0.15);
@@ -159,54 +182,21 @@ body {
 }
 
 /* =========================
-   STATS CARDS
+   SEARCH BAR
 ========================= */
-.stats {
-  display: flex;
-  gap: 22px;
-  margin-bottom: 28px;
-}
-
-.stat-card {
-  flex: 1;
-  padding: 22px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  text-align: center;
-  box-shadow: 0 0 25px rgba(255, 122, 24, 0.12);
-}
-
-.stat-card h3 {
-  font-size: 32px;
-  margin: 0;
-}
-
-.stat-card p {
-  margin-top: 6px;
-  font-size: 14px;
-  opacity: 0.85;
+.admin-search {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 16px 0 20px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: #e5e7eb;
 }
 
 /* =========================
-   FILTER BAR
+   SUMMARY DASHBOARD
 ========================= */
-.admin-filters {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 26px;
-}
-
-.admin-filters input,
-.admin-filters select {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(0,0,0,0.4);
-  color: #ffffff;
-}
-/* ================= SUMMARY DASHBOARD ================= */
-
 .admin-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -225,13 +215,11 @@ body {
 .summary-card p {
   color: #94a3b8;
   margin-bottom: 6px;
-  font-size: 0.9rem;
 }
 
 .summary-card h3 {
   font-size: 1.8rem;
   color: #e5e7eb;
-  margin-bottom: 4px;
 }
 
 .summary-card span {
@@ -247,29 +235,38 @@ body {
   color: #f59e0b;
 }
 
-/* ================= PAYMENT CARDS ================= */
-
+/* =========================
+   ADMIN CARDS
+========================= */
 .admin-card {
-  background: #020617;
-  border: 1px solid #1e293b;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 20px;
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 35px rgba(0,0,0,0.6);
 }
 
 .admin-card img {
   width: 100%;
-  border-radius: 10px;
-  margin-bottom: 12px;
+  max-width: 420px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255,255,255,0.15);
 }
 
 .admin-card p {
+  font-size: 14px;
   margin: 6px 0;
-  color: #e5e7eb;
 }
 
-/* ================= ACTION BUTTONS ================= */
-
+/* =========================
+   ACTION BUTTONS
+========================= */
 .admin-actions {
   display: flex;
   gap: 10px;
@@ -278,11 +275,11 @@ body {
 }
 
 .admin-actions button {
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
   border: none;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: 600;
   background: #2563eb;
   color: white;
 }
@@ -297,56 +294,16 @@ body {
 }
 
 /* =========================
-   CARDS (PAYMENTS & TEAMS)
+   STATUS BADGES
 ========================= */
-.admin-card {
-  padding: 22px;
-  border-radius: 20px;
-  margin-bottom: 24px;
-  background: linear-gradient(
-    145deg,
-    rgba(255,255,255,0.06),
-    rgba(255,255,255,0.02)
-  );
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 0 35px rgba(0,0,0,0.6);
-}
-
-.admin-card p {
-  font-size: 14px;
-  margin: 6px 0;
-}
-
-.admin-card img {
-  width: 100%;
-  max-width: 420px;
-  border-radius: 14px;
-  margin-bottom: 14px;
-  cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-/* =========================
-   ACTION BUTTONS
-========================= */
-.admin-card button {
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: none;
+.status-confirmed {
+  color: #22c55e;
   font-weight: 700;
-  cursor: pointer;
-  margin-top: 10px;
 }
 
-.admin-card button:first-of-type {
-  background: linear-gradient(90deg, #22c55e, #16a34a);
-  color: #ffffff;
-}
-
-.admin-card button:last-of-type {
-  background: linear-gradient(90deg, #ef4444, #b91c1c);
-  color: #ffffff;
-  margin-left: 10px;
+.status-pending {
+  color: #f59e0b;
+  font-weight: 700;
 }
 
 /* =========================
@@ -373,18 +330,29 @@ body {
    RESPONSIVE
 ========================= */
 @media (max-width: 768px) {
+  .admin-topbar {
+    display: flex;
+  }
+
   .admin-layout {
     flex-direction: column;
   }
 
   .admin-sidebar {
+    position: fixed;
+    top: 56px;
+    left: -100%;
     width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    height: calc(100vh - 56px);
+    z-index: 999;
+    transition: left 0.3s ease;
   }
 
-  .stats {
-    flex-direction: column;
+  .admin-sidebar.open {
+    left: 0;
+  }
+
+  .admin-content {
+    padding: 20px;
   }
 }
