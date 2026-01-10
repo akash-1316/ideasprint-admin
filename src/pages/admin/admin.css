@@ -45,42 +45,27 @@ body {
 }
 /* ================= PIE CHART RESPONSIVE ================= */
 
+/* ===== CHART CARD ===== */
 .admin-chart {
-  margin: 30px 0;
+  margin: 24px 0;
   background: #fff;
-  padding: 20px;
-  border-radius: 12px;
+  padding: 16px;
+  border-radius: 14px;
 }
 
-/* Tablet & below */
-@media (max-width: 768px) {
-  .admin-chart {
-    padding: 15px;
-  }
-
-  .admin-chart h3 {
-    font-size: 16px;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-}
-
-/* Mobile phones */
+/* ===== MOBILE FIX ===== */
 @media (max-width: 480px) {
   .admin-chart {
-    padding-bottom: 20px;
+    padding: 12px;
   }
 
   .admin-chart h3 {
+    text-align: center;
     font-size: 15px;
-  }
-
-  /* Force chart container to stay visible */
-  .admin-chart > div {
-    width: 100% !important;
-    height: 400px !important;
+    margin-bottom: 8px;
   }
 }
+
 
 
 .admin-login-card input {
