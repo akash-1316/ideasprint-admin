@@ -21,9 +21,21 @@ const AdminPayments = () => {
       .catch(() => toast.error("Failed to load admin data"));
   }, []);
 
+  /* ================= REMOVE DUPLICATE PAYMENTS (FRONTEND ONLY) ================= */
+  const uniquePayments = useMemo(() => {
+    const map = new Map();
+
+    payments.forEach((p) => {
+      const key = p.utr || `${p.userId}-${p.amount}`;
+      map.set(key, p); // latest wins
+    });
+
+    return Array.from(map.values());
+  }, [payments]);
+
   /* ================= MERGE DATA ================= */
   const mergedPayments = useMemo(() => {
-    return payments.map((p) => {
+    return uniquePayments.map((p) => {
       const reg = registrations.find(
         (r) => String(r.userId) === String(p.userId)
       );
@@ -34,7 +46,7 @@ const AdminPayments = () => {
         leaderName: reg?.leaderName || "—",
       };
     });
-  }, [payments, registrations]);
+  }, [uniquePayments, registrations]);
 
   /* ================= STATS ================= */
   const stats = useMemo(() => {
