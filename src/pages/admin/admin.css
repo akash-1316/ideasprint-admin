@@ -43,6 +43,12 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.admin-chart {
+  margin: 30px 0;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+}
 
 .admin-login-card input {
   width: 100%;
