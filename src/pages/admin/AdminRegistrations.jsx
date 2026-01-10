@@ -3,6 +3,18 @@ import API from "../../api/axios";
 import "./admin.css";
 import { toast } from "react-toastify";
 
+// 📊 CHART IMPORTS
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#9C27B0"];
+
 const AdminRegistrations = () => {
   const [teams, setTeams] = useState([]);
   const [search, setSearch] = useState("");
@@ -14,22 +26,37 @@ const AdminRegistrations = () => {
       .catch(() => toast.error("Failed to load registrations"));
   }, []);
 
+  // ================= REMOVE DUPLICATES (FRONTEND ONLY) =================
+  const uniqueTeams = useMemo(() => {
+    const map = new Map();
+
+    teams.forEach((t) => {
+      const key = t.leaderEmail || `${t.teamName}-${t.leaderMobile}`;
+      if (!map.has(key)) {
+        map.set(key, t);
+      }
+    });
+
+    return Array.from(map.values());
+  }, [teams]);
+
   // ================= SEARCH FILTER =================
   const filteredTeams = useMemo(() => {
-    return teams.filter((t) =>
+    return uniqueTeams.filter((t) =>
       [
         t.teamName,
         t.leaderName,
         t.leaderEmail,
         t.college,
+        t.domain,
       ]
         .join(" ")
         .toLowerCase()
         .includes(search.toLowerCase())
     );
-  }, [teams, search]);
+  }, [uniqueTeams, search]);
 
-  // ================= STATS CALCULATION (FILTERED) =================
+  // ================= STATS =================
   const stats = useMemo(() => {
     const total = filteredTeams.length;
     const confirmed = filteredTeams.filter(
@@ -40,6 +67,22 @@ const AdminRegistrations = () => {
     return { total, confirmed, pending };
   }, [filteredTeams]);
 
+  // ================= DOMAIN PIE DATA =================
+  const domainData = useMemo(() => {
+    const domainCount = {};
+
+    filteredTeams.forEach((t) => {
+      if (t.domain) {
+        domainCount[t.domain] = (domainCount[t.domain] || 0) + 1;
+      }
+    });
+
+    return Object.entries(domainCount).map(([name, value]) => ({
+      name,
+      value,
+    }));
+  }, [filteredTeams]);
+
   return (
     <div>
       <h2>Registrations</h2>
@@ -47,7 +90,7 @@ const AdminRegistrations = () => {
       {/* 🔍 SEARCH BAR */}
       <input
         className="admin-search"
-        placeholder="Search by team, leader, email, college"
+        placeholder="Search by team, leader, email, college, domain"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -68,6 +111,31 @@ const AdminRegistrations = () => {
           <p>Pending</p>
           <h3>{stats.pending}</h3>
         </div>
+      </div>
+
+      {/* 🥧 DOMAIN PIE CHART */}
+      <div className="admin-chart">
+        <h3>Domain Distribution</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={domainData}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={100}
+              label
+            >
+              {domainData.map((_, index) => (
+                <Cell
+                  key={index}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
 
       {/* 🔽 REGISTRATION LIST */}
