@@ -68,7 +68,7 @@ body {
 /* Mobile phones */
 @media (max-width: 480px) {
   .admin-chart {
-    padding: 10px;
+    padding-bottom: 20px;
   }
 
   .admin-chart h3 {
@@ -78,7 +78,7 @@ body {
   /* Force chart container to stay visible */
   .admin-chart > div {
     width: 100% !important;
-    height: 260px !important;
+    height: 400px !important;
   }
 }
 
