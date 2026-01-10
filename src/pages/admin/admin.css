@@ -43,12 +43,45 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+/* ================= PIE CHART RESPONSIVE ================= */
+
 .admin-chart {
   margin: 30px 0;
   background: #fff;
   padding: 20px;
   border-radius: 12px;
 }
+
+/* Tablet & below */
+@media (max-width: 768px) {
+  .admin-chart {
+    padding: 15px;
+  }
+
+  .admin-chart h3 {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .admin-chart {
+    padding: 10px;
+  }
+
+  .admin-chart h3 {
+    font-size: 15px;
+  }
+
+  /* Force chart container to stay visible */
+  .admin-chart > div {
+    width: 100% !important;
+    height: 260px !important;
+  }
+}
+
 
 .admin-login-card input {
   width: 100%;
