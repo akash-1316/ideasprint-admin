@@ -8,20 +8,30 @@ const AdminPayments = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
 
-  /* ================= FETCH BOTH ================= */
+  /* ================= SAFE FETCH (NO Promise.all) ================= */
   useEffect(() => {
-    Promise.all([
-      API.get("/admin/payments"),
-      API.get("/admin/registrations"),
-    ])
-      .then(([payRes, regRes]) => {
+    const loadData = async () => {
+      // Load payments (CRITICAL)
+      try {
+        const payRes = await API.get("/admin/payments");
         setPayments(payRes.data);
+      } catch {
+        toast.error("Failed to load payments");
+      }
+
+      // Load registrations (OPTIONAL)
+      try {
+        const regRes = await API.get("/admin/registrations");
         setRegistrations(regRes.data);
-      })
-      .catch(() => toast.error("Failed to load admin data"));
+      } catch {
+        toast.warn("Registrations data unavailable");
+      }
+    };
+
+    loadData();
   }, []);
 
-  /* ================= REMOVE DUPLICATE PAYMENTS (FRONTEND ONLY) ================= */
+  /* ================= REMOVE DUPLICATES (FRONTEND ONLY) ================= */
   const uniquePayments = useMemo(() => {
     const map = new Map();
 
@@ -33,7 +43,7 @@ const AdminPayments = () => {
     return Array.from(map.values());
   }, [payments]);
 
-  /* ================= MERGE DATA ================= */
+  /* ================= MERGE REGISTRATION DATA ================= */
   const mergedPayments = useMemo(() => {
     return uniquePayments.map((p) => {
       const reg = registrations.find(
@@ -55,12 +65,12 @@ const AdminPayments = () => {
     const pending = mergedPayments.filter((p) => !p.verified);
 
     const totalAmount = mergedPayments.reduce(
-      (s, p) => s + Number(p.amount || 0),
+      (sum, p) => sum + Number(p.amount || 0),
       0
     );
 
     const verifiedAmount = verified.reduce(
-      (s, p) => s + Number(p.amount || 0),
+      (sum, p) => sum + Number(p.amount || 0),
       0
     );
 
@@ -138,7 +148,7 @@ const AdminPayments = () => {
         </div>
       </div>
 
-      {/* PAYMENTS */}
+      {/* PAYMENTS LIST */}
       {mergedPayments.map((p) => (
         <div className="admin-card" key={p._id}>
           <img
